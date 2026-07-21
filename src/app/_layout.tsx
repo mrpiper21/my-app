@@ -1,5 +1,6 @@
 import { SessionProvider, useSession } from '@/context/AuthContext';
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();
@@ -15,8 +16,13 @@ export default function RootLayout() {
 function RootNavigator() {
   const { session, isLoading } = useSession();
 
-  // Native splash stays up (see animated-icon.tsx, which hides it once
-  // (tabs)/index mounts) until the session check below resolves.
+  useEffect(() => {
+    if (!isLoading) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoading]);
+
+  // Native splash stays up until the session check resolves.
   if (isLoading) {
     return null;
   }

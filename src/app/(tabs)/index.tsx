@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import CustomHeader from '@/components/ui/custom-header';
 import { BottomTabInset, Colors, MaxContentWidth, Spacing } from '@/constants/theme';
 import { Image } from 'expo-image';
 
@@ -39,11 +40,8 @@ export default function HomeScreen() {
         <ThemedView style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
                 {/* Header Section */}
-                <ThemedView style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Ionicons name="menu" color="white" size={32} />
-                    <ThemedText>MoviewFlix</ThemedText>
-                    <Ionicons name="notifications" color="white" size={32} />
-                </ThemedView>
+
+                <CustomHeader title="MovieFlix" leftIcon={<Ionicons name="menu" color="white" size={32} />} rightIcon={<Ionicons name="notifications" color="white" size={32} />} />
                 {/* Search Section */}
                 <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two, backgroundColor: Colors.light.card, padding: Spacing.two, borderRadius: Spacing.two }}>
                     <Ionicons color={Colors.light.textSecondary} name="search" size={24} />
