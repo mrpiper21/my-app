@@ -10,27 +10,25 @@ export default function TabLayout() {
             backgroundColor={colors.background}
             indicatorColor={colors.backgroundElement}
             labelStyle={{ selected: { color: colors.text } }}>
-            <NativeTabs.Trigger name="index">
+            <NativeTabs.Trigger name="home/">
                 <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/home.png')}
                     renderingMode="template"
                 />
             </NativeTabs.Trigger>
-
-            <NativeTabs.Trigger name="explore">
-                <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
-                <NativeTabs.Trigger.Icon
-                    src={require('@/assets/images/tabIcons/explore.png')}
-                    renderingMode="template"
-                />
-            </NativeTabs.Trigger>
-
             <NativeTabs.Trigger name="search">
                 <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     sf="magnifyingglass"
                     md="search"
+                />
+            </NativeTabs.Trigger>
+            <NativeTabs.Trigger name="favorite">
+                <NativeTabs.Trigger.Label>Favorite</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Icon
+                    sf="heart"
+                    md="favorite"
                 />
             </NativeTabs.Trigger>
         </NativeTabs>

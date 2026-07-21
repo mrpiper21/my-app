@@ -5,7 +5,6 @@ import Input from "@/components/ui/Input"
 import { useSession } from "@/context/AuthContext"
 // import LoginBackgroundImage from "@/assets/images/login-background-image.jpeg"
 import { Image } from "expo-image"
-import { router } from "expo-router"
 import { StyleSheet, Text, View } from "react-native"
 
 
@@ -14,7 +13,6 @@ const LoginScreen = () => {
     const { signIn } = useSession()
     const handleSignIn = () => {
         signIn("12345")
-        router.push("/(tabs)/explore")
     }
 
     return (
