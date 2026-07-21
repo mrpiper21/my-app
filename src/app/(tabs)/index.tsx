@@ -1,12 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/themed-text';
+import MovieItem from '@/components/home/movie-item';
+import SearchInput from '@/components/home/SearchInput';
 import { ThemedView } from '@/components/themed-view';
 import CustomHeader from '@/components/ui/custom-header';
-import { BottomTabInset, Colors, MaxContentWidth, Spacing } from '@/constants/theme';
-import { Image } from 'expo-image';
+import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useMemo, useState } from 'react';
 
 const MOCK_MOVIES = [
     {
@@ -36,39 +37,30 @@ const MOCK_MOVIES = [
 ];
 
 export default function HomeScreen() {
+    const [searchText, setSearchText] = useState('')
+
+    const filteredItems = useMemo(() => {
+        const query = searchText.trim().toLowerCase()
+        if (!query) return MOCK_MOVIES
+        return MOCK_MOVIES.filter((movie) => movie.title.toLowerCase().includes(query))
+    }, [searchText])
+
     return (
         <ThemedView style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
-                {/* Header Section */}
-
                 <CustomHeader title="MovieFlix" leftIcon={<Ionicons name="menu" color="white" size={32} />} rightIcon={<Ionicons name="notifications" color="white" size={32} />} />
-                {/* Search Section */}
-                <ThemedView style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two, backgroundColor: Colors.light.card, padding: Spacing.two, borderRadius: Spacing.two }}>
-                    <Ionicons color={Colors.light.textSecondary} name="search" size={24} />
-                    <TextInput placeholder="Search movies TV shows" style={{ flex: 1 }} />
-                </ThemedView>
-
-                <ThemedView>
-                    <ThemedView style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-                        <ThemedText style={{ color: "white" }}>Now Playing</ThemedText>
-                        <ThemedText style={{ color: "#F5C451" }}>See all</ThemedText>
-                    </ThemedView>
-                    {/**Movie grid */}
-                    <ThemedView style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 2, marginVertical: Spacing.two }}>
-                        {MOCK_MOVIES.map((movie) => (
-                            <TouchableOpacity activeOpacity={0.7} key={movie.id} style={{ gap: Spacing.three, marginVertical: Spacing.two }}>
-                                <Image source={{ uri: movie.posterUrl }} style={{ width: 110, height: 150, backgroundColor: Colors.light.card, borderRadius: Spacing.two }} />
-                                <ThemedView>
-                                    <ThemedText style={{ color: "white" }}>{movie.title}</ThemedText>
-                                    <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                                        <Ionicons name="star" color="#F5C451" size={16} />
-                                        <ThemedText style={{ color: "white" }}>{movie.rating}</ThemedText>
-                                    </View>
-                                </ThemedView>
-                            </TouchableOpacity>
-                        ))}
-                    </ThemedView>
-                </ThemedView>
+                <SearchInput onChangeText={setSearchText} placeholder="Search movies TV shows" />
+                <FlatList
+                    data={filteredItems}
+                    renderItem={({ item }) => (
+                        <MovieItem movie={item} />
+                    )}
+                    keyExtractor={(item) => item.id.toString()}
+                    numColumns={3}
+                    columnWrapperStyle={{ justifyContent: 'space-between' }}
+                    contentContainerStyle={{ marginVertical: Spacing.two }}
+                    showsVerticalScrollIndicator={false}
+                />
             </SafeAreaView>
         </ThemedView>
     );
