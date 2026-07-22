@@ -1,21 +1,21 @@
 import { FC } from "react";
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { ThemedText } from "../themed-text";
-import { ThemedView } from "../themed-view";
 
 interface CustomHeaderProps {
     title: string;
     leftIcon?: React.ReactNode;
     rightIcon?: React.ReactNode;
+    style?: StyleProp<ViewStyle>
 }
 
-const CustomHeader: FC<CustomHeaderProps> = ({ title, leftIcon, rightIcon }) => {
+const CustomHeader: FC<CustomHeaderProps> = ({ title, leftIcon, rightIcon, style }) => {
     return (
-        <ThemedView style={styles.container}>
+        <View style={[styles.container, style]}>
             {leftIcon}
             <ThemedText >{title}</ThemedText>
             {rightIcon}
-        </ThemedView>
+        </View>
     );
 };
 
@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        paddingHorizontal: 16
     },
 })
 

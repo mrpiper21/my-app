@@ -2,6 +2,7 @@ import { IMovie } from "@/@types/home"
 import { Colors, Spacing } from "@/constants/theme"
 import { Ionicons } from "@expo/vector-icons"
 import { Image } from "expo-image"
+import { router } from "expo-router"
 import { FC } from "react"
 import { TouchableOpacity, View } from "react-native"
 import { ThemedText } from "../themed-text"
@@ -13,7 +14,7 @@ interface IMovieProps {
 
 const MovieItem: FC<IMovieProps> = ({ movie }) => {
     return (
-        <TouchableOpacity activeOpacity={0.7} key={movie.id} style={{ gap: Spacing.three, marginVertical: Spacing.two }}>
+        <TouchableOpacity onPress={() => router.push(`/(protected)/${movie.id}`)} activeOpacity={0.7} key={movie.id} style={{ gap: Spacing.three, marginVertical: Spacing.two }}>
             <Image source={{ uri: movie.posterUrl }} style={{ width: 110, height: 150, backgroundColor: Colors.light.card, borderRadius: Spacing.two }} />
             <ThemedView>
                 <ThemedText style={{ color: "white" }}>{movie.title}</ThemedText>

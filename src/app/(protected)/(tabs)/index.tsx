@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { IMovie } from '@/@types/home';
 import MovieItem from '@/components/home/movie-item';
 import SearchInput from '@/components/home/SearchInput';
 import { ThemedView } from '@/components/themed-view';
@@ -9,17 +10,20 @@ import CustomHeader from '@/components/ui/custom-header';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useMemo, useState } from 'react';
 
-const MOCK_MOVIES = [
+export const MOCK_MOVIES: IMovie[] = [
     {
         id: 1,
         title: 'Movie 1',
         posterUrl: 'https://picsum.photos/seed/movie1/150/225',
+        description: "That experience is stronger than what many junior candidates bring. The biggest challenge is likely to be working efficiently under time pressure rather than learning new concepts.",
         rating: 4.5,
     },
     {
         id: 2,
         title: 'Movie 2',
         posterUrl: 'https://picsum.photos/seed/movie2/150/225',
+        description: "That experience is stronger than what many junior candidates bring. The biggest challenge is likely to be working efficiently under time pressure rather than learning new concepts.",
+        year: "2026",
         rating: 3.8,
     },
     {
