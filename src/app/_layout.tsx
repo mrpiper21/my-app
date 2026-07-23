@@ -1,15 +1,23 @@
 import { SessionProvider, useSession } from '@/context/AuthContext';
-import { Stack } from 'expo-router';
+import {
+  QueryClient,
+  QueryClientProvider
+} from '@tanstack/react-query';
 import * as SplashScreen from 'expo-splash-screen';
+import { Stack } from 'expo-router';
 import { useEffect } from 'react';
+
+const queryClient = new QueryClient()
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   return (
-    <SessionProvider>
-      <RootNavigator />
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider>
+        <RootNavigator />
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }
 
