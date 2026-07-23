@@ -1,16 +1,14 @@
-import { IMovie } from "@/@types/home"
 import Casts from "@/components/movie-detail/Casts"
 import { ThemedText } from "@/components/themed-text"
 import { ThemedView } from "@/components/themed-view"
 import Button from "@/components/ui/Button"
 import CustomHeader from "@/components/ui/custom-header"
 import { Spacing } from "@/constants/theme"
+import { useGetMovie } from "@/hooks/movie-hook"
 import { Ionicons } from "@expo/vector-icons"
 import { Image } from "expo-image"
 import { router, useLocalSearchParams } from "expo-router"
-import { useMemo } from "react"
 import { StyleSheet, Text, View } from "react-native"
-import { MOCK_MOVIES } from "./(tabs)"
 
 const person = [
     {
@@ -32,11 +30,10 @@ const person = [
 
 const MovieDetailScreen = () => {
     const { movieId } = useLocalSearchParams()
-    const movieDetail: IMovie | null = useMemo(() => {
-        const movieItem = MOCK_MOVIES.find((movie) => movie.id.toString() === movieId)
-        return movieItem ?? null
+    const { data: movieDetail, isPending } = useGetMovie(movieId as string)
 
-    }, [movieId])
+    if (isPending) return <Text style={{ color: "white" }}>Loading...</Text>
+
     return (
         <ThemedView style={{ flex: 1 }}>
 

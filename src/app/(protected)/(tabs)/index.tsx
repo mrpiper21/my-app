@@ -1,54 +1,37 @@
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { IMovie } from '@/@types/home';
 import MovieItem from '@/components/home/movie-item';
 import SearchInput from '@/components/home/SearchInput';
 import { ThemedView } from '@/components/themed-view';
 import CustomHeader from '@/components/ui/custom-header';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useGetMovies } from '@/hooks/movie-hook';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 
-export const MOCK_MOVIES: IMovie[] = [
-    {
-        id: 1,
-        title: 'Movie 1',
-        posterUrl: 'https://picsum.photos/seed/movie1/150/225',
-        description: "That experience is stronger than what many junior candidates bring. The biggest challenge is likely to be working efficiently under time pressure rather than learning new concepts.",
-        rating: 4.5,
-    },
-    {
-        id: 2,
-        title: 'Movie 2',
-        posterUrl: 'https://picsum.photos/seed/movie2/150/225',
-        description: "That experience is stronger than what many junior candidates bring. The biggest challenge is likely to be working efficiently under time pressure rather than learning new concepts.",
-        year: "2026",
-        rating: 3.8,
-    },
-    {
-        id: 3,
-        title: 'Movie 3',
-        posterUrl: 'https://picsum.photos/seed/movie3/150/225',
-        rating: 4.2,
-    },
-    {
-        id: 4,
-        title: 'Movie 4',
-        posterUrl: 'https://picsum.photos/seed/movie4/150/225',
-        rating: 4.0,
-    },
-];
+const GRID_COLUMNS = 3
+const GRID_GAP = Spacing.three
 
 export default function HomeScreen() {
     const [searchText, setSearchText] = useState('')
+    const { width: windowWidth } = useWindowDimensions()
+
+    const { data } = useGetMovies()
+
+    const movies = data ?? []
 
     const filteredItems = useMemo(() => {
         const query = searchText.trim().toLowerCase()
-        if (!query) return MOCK_MOVIES
-        return MOCK_MOVIES.filter((movie) => movie.title.toLowerCase().includes(query))
-    }, [searchText])
+        if (!query) return movies
+        return movies.filter((movie) => movie.title.toLowerCase().includes(query))
+    }, [searchText, movies])
+
+    const itemWidth = useMemo(() => {
+        const containerWidth = Math.min(windowWidth, MaxContentWidth) - Spacing.four * 2
+        return (containerWidth - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS
+    }, [windowWidth])
 
     return (
         <ThemedView style={styles.container}>
@@ -58,12 +41,12 @@ export default function HomeScreen() {
                 <FlatList
                     data={filteredItems}
                     renderItem={({ item }) => (
-                        <MovieItem movie={item} />
+                        <MovieItem movie={item} width={itemWidth} />
                     )}
                     keyExtractor={(item) => item.id.toString()}
-                    numColumns={3}
-                    columnWrapperStyle={{ justifyContent: 'space-between' }}
-                    contentContainerStyle={{ marginVertical: Spacing.two }}
+                    numColumns={GRID_COLUMNS}
+                    columnWrapperStyle={{ gap: GRID_GAP }}
+                    contentContainerStyle={{ gap: GRID_GAP, paddingVertical: Spacing.two }}
                     showsVerticalScrollIndicator={false}
                 />
                 <TouchableOpacity onPress={() => router.push("/upload-movie")} activeOpacity={0.7}>

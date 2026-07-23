@@ -1,5 +1,6 @@
-import { uploadMovie } from "@/api/movies"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { getMovie, getMovies, uploadMovie } from "@/api/movies"
+import { useUserStore } from "@/store/user-store"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 
 export const useUploadMove = () => {
@@ -11,7 +12,30 @@ export const useUploadMove = () => {
                 console.log("upload movie error -----> ", error)
                 return
             }
-            console.log("movie -----> ", data)
+            queryClient.invalidateQueries({ queryKey: ["movies"] })
         },
     })
+}
+
+export const useGetMovies = () => {
+    const { user } = useUserStore()
+    const userId = user?._id
+
+    const { isPending, error, data } = useQuery({
+        queryKey: ['movies', userId],
+        queryFn: () => getMovies(userId as string),
+        enabled: !!userId
+    })
+
+    return { isPending, error, data }
+
+}
+
+export const useGetMovie = (movieId: string) => {
+    const { isPending, data } = useQuery({
+        queryKey: [],
+        queryFn: () => getMovie(movieId)
+    })
+
+    return { isPending, data }
 }
