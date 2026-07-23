@@ -4,11 +4,11 @@ import { ThemedView } from "@/components/themed-view"
 import Button from "@/components/ui/Button"
 import CustomHeader from "@/components/ui/custom-header"
 import { Spacing } from "@/constants/theme"
-import { useGetMovie } from "@/hooks/movie-hook"
+import { useDeleteMovie, useGetMovie } from "@/hooks/movie-hook"
 import { Ionicons } from "@expo/vector-icons"
 import { Image } from "expo-image"
 import { router, useLocalSearchParams } from "expo-router"
-import { StyleSheet, Text, View } from "react-native"
+import { Alert, StyleSheet, Text, View } from "react-native"
 
 const person = [
     {
@@ -30,7 +30,28 @@ const person = [
 
 const MovieDetailScreen = () => {
     const { movieId } = useLocalSearchParams()
-    const { data: movieDetail, isPending, isFetching } = useGetMovie(movieId as string)
+    const { data: movieDetail, isFetching } = useGetMovie(movieId as string)
+    const deleteMovieMutation = useDeleteMovie()
+
+    const handleDelete = () => {
+        Alert.alert(
+            "Delete movie",
+            "Are you sure you want to delete this movie? This can't be undone.",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: () => {
+                        deleteMovieMutation.mutate(movieId as string, {
+                            onSuccess: () => router.back(),
+                            onError: (error) => Alert.alert("Couldn't delete movie", error.message),
+                        })
+                    },
+                },
+            ]
+        )
+    }
 
     if (isFetching) return <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: 'black' }}>
         <Text style={{ color: "white" }}>Loading...</Text>
@@ -41,7 +62,20 @@ const MovieDetailScreen = () => {
 
             <View style={{ display: "flex", flex: 1 }}>
                 <Image style={{ height: 350, width: "100%" }} source={{ uri: movieDetail?.posterUrl }} />
-                <CustomHeader style={{ position: "absolute", top: Spacing.six, left: 0, right: 0 }} leftIcon={<Ionicons style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }} onPress={() => router.back()} size={24} color="white" name="chevron-back" />} title="" rightIcon={<Ionicons size={24} color="yellow" name="bookmark" />} />
+                <CustomHeader
+                    style={{ position: "absolute", top: Spacing.six, left: 0, right: 0 }}
+                    leftIcon={<Ionicons style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }} onPress={() => router.back()} size={24} color="white" name="chevron-back" />}
+                    title=""
+                    rightIcon={
+                        <Ionicons
+                            style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }}
+                            onPress={handleDelete}
+                            size={24}
+                            color="#ff5c5c"
+                            name="trash"
+                        />
+                    }
+                />
                 <View style={{ paddingHorizontal: 16, marginTop: 10 }}>
                     <View style={{ gap: Spacing.two }}>
                         <ThemedText style={{ color: "white" }} type="subtitle">{movieDetail?.title}</ThemedText>
