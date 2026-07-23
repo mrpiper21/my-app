@@ -1,9 +1,8 @@
 import { signInService } from "@/api/auth"
 import { useUserStore } from "@/store/user-store"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 
 export const useLogin = () => {
-    const queryClient = useQueryClient()
     const { updateSession, updateUser } = useUserStore()
     return useMutation({
         mutationFn: signInService,
@@ -12,7 +11,6 @@ export const useLogin = () => {
                 updateSession(res.toString())
                 updateUser({ email: data?.email as string, name: data?.displayName as string, phoneNumber: data?.phoneNumber as string, _id: data.uid })
             })
-            queryClient.invalidateQueries({ queryKey: ['movies'] })
         },
     })
 }

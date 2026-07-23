@@ -1,14 +1,16 @@
+import CustomToast from "@/components/custom-toast"
 import { ThemedView } from "@/components/themed-view"
 import Button from "@/components/ui/Button"
 import CustomHeader from "@/components/ui/custom-header"
 import Input from "@/components/ui/Input"
 import { Spacing } from "@/constants/theme"
+import { useUploadMove } from "@/hooks/movie-hook"
+import { useUserStore } from "@/store/user-store"
 import { Ionicons } from "@expo/vector-icons"
 import { Image } from "expo-image"
 import { router } from "expo-router"
 import { useState } from "react"
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native"
-import CustomToast from "@/components/custom-toast"
 
 const UploadMovieScreen = () => {
     const [posterUrl, setPosterUrl] = useState("")
@@ -16,22 +18,23 @@ const UploadMovieScreen = () => {
     const [description, setDescription] = useState("")
     const [year, setYear] = useState("")
     const [genre, setGenre] = useState("")
-    const [rating, setRating] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
+    const [rating, setRating] = useState(0)
     const [showToast, setShowToast] = useState(false)
 
+    const uploadMovieMutation = useUploadMove()
+
     const canSubmit = posterUrl.trim().length > 0 && title.trim().length > 0
+    const { user } = useUserStore()
 
     const handleUpload = async () => {
         if (!canSubmit) return
-        setIsLoading(true)
         try {
             // TODO: send { posterUrl, title, description, year, genre, rating } to the movies API once it exists
+            uploadMovieMutation.mutate({ title, description, year, genre, rating, posterUrl, userId: user?._id })
             await new Promise((resolve) => setTimeout(resolve, 1000))
             setShowToast(true)
             router.back()
         } finally {
-            setIsLoading(false)
         }
     }
 
@@ -40,6 +43,7 @@ const UploadMovieScreen = () => {
             <CustomHeader
                 title="Upload Movie"
                 leftIcon={<Ionicons name="arrow-back" color="white" size={28} onPress={() => router.back()} />}
+                style={{ marginTop: Spacing.six }}
             />
             <KeyboardAvoidingView
                 style={{ flex: 1 }}
@@ -91,7 +95,7 @@ const UploadMovieScreen = () => {
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={styles.label}>Rating</Text>
-                                <Input type="number" placeholder="0 - 5" placeholderTextColor="#ccc" value={rating} onChangeText={setRating} />
+                                <Input type="number" placeholder="0 - 5" placeholderTextColor="#ccc" value={String(rating)} onChangeText={(rate) => setRating(Number(rate))} />
                             </View>
                         </View>
 
@@ -101,7 +105,7 @@ const UploadMovieScreen = () => {
                         </View>
 
                         <Button
-                            loading={isLoading}
+                            loading={uploadMovieMutation.isPending}
                             onPress={handleUpload}
                             style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
                             text="Upload Movie"
@@ -125,8 +129,8 @@ const styles = StyleSheet.create({
     posterPreview: {
         alignSelf: "center",
         marginTop: Spacing.four,
-        width: 160,
-        height: 240,
+        width: "100%",
+        height: 160,
         borderRadius: Spacing.two,
         overflow: "hidden",
         backgroundColor: "#151A21",
