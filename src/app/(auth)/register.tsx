@@ -2,31 +2,31 @@ import { ThemedText } from "@/components/themed-text"
 import { ThemedView } from "@/components/themed-view"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
-import { useSession } from "@/context/AuthContext"
-// import LoginBackgroundImage from "@/assets/images/login-background-image.jpeg"
-import CustomToast from "@/components/custom-toast"
 import { auth } from "@/config/firebaseConfig"
+import { useSession } from "@/context/AuthContext"
 import { Image } from "expo-image"
 import { router } from "expo-router"
-import { signInWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
 
 
-const LoginScreen = () => {
+
+const RegisterScreen = () => {
     const { signIn } = useSession()
-    const [email, setEmail] = useState<string>("")
-    const [password, setPassword] = useState<string>("")
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [showToast, setShowToast] = useState<boolean>(false)
-    const handleSignIn = async () => {
+
+    const handleRegister = async () => {
         setIsLoading(true)
         try {
-            const userCredential = signInWithEmailAndPassword(auth, email, password)
-            signIn(await (await userCredential).user.getIdToken())
-            setShowToast(true)
+            const userCredentials = await createUserWithEmailAndPassword(auth, email, password)
+            signIn(await userCredentials.user.getIdToken())
+            console.log("-----> user", userCredentials.user)
             setIsLoading(false)
-
         } catch (error) {
             console.error("register error ---> ", error)
             setIsLoading(false)
@@ -45,28 +45,32 @@ const LoginScreen = () => {
 
                 <View style={styles.formContainer}>
                     <View style={{ alignItems: "flex-start" }}>
-                        <Text style={styles.welcome}>Welcome back!</Text>
-                        <Text style={styles.subtitle}>Sign in to continue</Text>
+                        <Text style={styles.welcome}>Create an account</Text>
+                        <Text style={styles.subtitle}>Sign up to get started</Text>
+                    </View>
+                    <View style={{ marginTop: 20 }}>
+                        <Text style={styles.label}>Name</Text>
+                        <Input placeholder="Enter your name" placeholderTextColor="#ccc" value={name} onChangeText={setName} />
                     </View>
                     <View style={{ marginTop: 20 }}>
                         <Text style={styles.label}>Email</Text>
-                        <Input onChangeText={(text) => setEmail(text)} type="email" placeholder="Enter your email" placeholderTextColor="#ccc" />
+                        <Input type="email" placeholder="Enter your email" placeholderTextColor="#ccc" value={email} onChangeText={setEmail} />
                     </View>
                     <View style={{ marginTop: 20 }}>
                         <Text style={styles.label}>Password</Text>
-                        <Input onChangeText={(text) => setPassword(text)} type="password" placeholder="Enter your password" placeholderTextColor="#ccc" />
+                        <Input type="password" placeholder="Enter your password" placeholderTextColor="#ccc" secureTextEntry value={password} onChangeText={setPassword} />
                     </View>
-                    <View style={{ marginTop: 20, alignItems: "flex-end" }}>
-                        <Text style={{ color: "yellow" }}>Forgot your password?</Text>
+                    <View style={{ marginTop: 20 }}>
+                        <Text style={styles.label}>Confirm Password</Text>
+                        <Input type="password" placeholder="Re-enter your password" placeholderTextColor="#ccc" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
                     </View>
-                    <Button loading={isLoading} onPress={handleSignIn} style={{ marginTop: 20 }} text="Sign In" />
+                    <Button loading={isLoading} onPress={handleRegister} style={{ marginTop: 20 }} text="Sign Up" />
                     <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'center' }}>
-                        <Text style={{ color: 'white' }}>Don't have an account? </Text>
-                        <Text style={{ color: "yellow" }} onPress={() => router.push("/(auth)/register")}>Sign Up</Text>
+                        <Text style={{ color: 'white' }}>Already have an account? </Text>
+                        <Text style={{ color: "yellow" }} onPress={() => router.replace("/(auth)")}>Sign In</Text>
                     </View>
                 </View>
             </View>
-            <CustomToast message="Login Successfull" visible={showToast} />
         </ThemedView>
     )
 }
@@ -113,4 +117,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default LoginScreen
+export default RegisterScreen
