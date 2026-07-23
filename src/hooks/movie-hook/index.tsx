@@ -32,10 +32,10 @@ export const useGetMovies = () => {
 }
 
 export const useGetMovie = (movieId: string) => {
-    const { isPending, data } = useQuery({
+    const { isPending, data, ...rest } = useQuery({
         queryKey: [],
         queryFn: () => getMovie(movieId)
     })
 
-    return { isPending, data }
+    return { isPending, data, ...rest }
 }

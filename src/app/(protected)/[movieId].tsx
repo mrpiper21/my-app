@@ -30,10 +30,12 @@ const person = [
 
 const MovieDetailScreen = () => {
     const { movieId } = useLocalSearchParams()
-    const { data: movieDetail, isPending } = useGetMovie(movieId as string)
+    const { data: movieDetail, isPending, isFetching } = useGetMovie(movieId as string)
 
-    if (isPending) return <Text style={{ color: "white" }}>Loading...</Text>
+    if (isFetching) return <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: 'black' }}>
+        <Text style={{ color: "white" }}>Loading...</Text>
 
+    </View>
     return (
         <ThemedView style={{ flex: 1 }}>
 
