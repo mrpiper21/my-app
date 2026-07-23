@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { IMovie } from '@/@types/home';
@@ -8,6 +8,7 @@ import SearchInput from '@/components/home/SearchInput';
 import { ThemedView } from '@/components/themed-view';
 import CustomHeader from '@/components/ui/custom-header';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 
 export const MOCK_MOVIES: IMovie[] = [
@@ -65,6 +66,9 @@ export default function HomeScreen() {
                     contentContainerStyle={{ marginVertical: Spacing.two }}
                     showsVerticalScrollIndicator={false}
                 />
+                <TouchableOpacity onPress={() => router.push("/upload-movie")} activeOpacity={0.7}>
+                    <Ionicons style={{ position: "absolute", bottom: -50, right: 5 }} size={64} color={"white"} name='add-circle' />
+                </TouchableOpacity>
             </SafeAreaView>
         </ThemedView>
     );
@@ -73,6 +77,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        display: 'flex'
     },
     safeArea: {
         flex: 1,

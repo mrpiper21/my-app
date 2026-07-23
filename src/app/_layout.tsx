@@ -1,11 +1,11 @@
-import { SessionProvider, useSession } from '@/context/AuthContext';
+import { SessionProvider } from '@/context/AuthContext';
+import { useUserStore } from '@/store/user-store';
 import {
   QueryClient,
   QueryClientProvider
 } from '@tanstack/react-query';
-import * as SplashScreen from 'expo-splash-screen';
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
 
 const queryClient = new QueryClient()
 
@@ -22,18 +22,7 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  const { session, isLoading } = useSession();
-
-  useEffect(() => {
-    if (!isLoading) {
-      SplashScreen.hideAsync();
-    }
-  }, [isLoading]);
-
-  // Native splash stays up until the session check resolves.
-  if (isLoading) {
-    return null;
-  }
+  const { session } = useUserStore()
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

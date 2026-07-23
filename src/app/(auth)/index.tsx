@@ -2,36 +2,18 @@ import { ThemedText } from "@/components/themed-text"
 import { ThemedView } from "@/components/themed-view"
 import Button from "@/components/ui/Button"
 import Input from "@/components/ui/Input"
-import { useSession } from "@/context/AuthContext"
 // import LoginBackgroundImage from "@/assets/images/login-background-image.jpeg"
-import CustomToast from "@/components/custom-toast"
-import { auth } from "@/config/firebaseConfig"
+import { useLogin } from "@/hooks/auth-hooks"
 import { Image } from "expo-image"
 import { router } from "expo-router"
-import { signInWithEmailAndPassword } from "firebase/auth"
 import { useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
 
 
 const LoginScreen = () => {
-    const { signIn } = useSession()
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [showToast, setShowToast] = useState<boolean>(false)
-    const handleSignIn = async () => {
-        setIsLoading(true)
-        try {
-            const userCredential = signInWithEmailAndPassword(auth, email, password)
-            signIn(await (await userCredential).user.getIdToken())
-            setShowToast(true)
-            setIsLoading(false)
-
-        } catch (error) {
-            console.error("register error ---> ", error)
-            setIsLoading(false)
-        }
-    }
+    const loginMuation = useLogin()
 
     return (
         <ThemedView style={styles.container}>
@@ -59,14 +41,14 @@ const LoginScreen = () => {
                     <View style={{ marginTop: 20, alignItems: "flex-end" }}>
                         <Text style={{ color: "yellow" }}>Forgot your password?</Text>
                     </View>
-                    <Button loading={isLoading} onPress={handleSignIn} style={{ marginTop: 20 }} text="Sign In" />
+                    <Button loading={loginMuation.isPending} onPress={() => loginMuation.mutate({ email, password })} style={{ marginTop: 20 }} text="Sign In" />
                     <View style={{ marginTop: 20, flexDirection: 'row', justifyContent: 'center' }}>
                         <Text style={{ color: 'white' }}>Don't have an account? </Text>
                         <Text style={{ color: "yellow" }} onPress={() => router.push("/(auth)/register")}>Sign Up</Text>
                     </View>
                 </View>
             </View>
-            <CustomToast message="Login Successfull" visible={showToast} />
+            {/* <CustomToast message="Login Successfull" visible={showToast} /> */}
         </ThemedView>
     )
 }

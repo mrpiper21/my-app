@@ -1,5 +1,6 @@
+import { useUserStore } from "@/store/user-store";
 import { FC } from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
 import { ThemedText } from "../themed-text";
 
 interface CustomHeaderProps {
@@ -10,11 +11,14 @@ interface CustomHeaderProps {
 }
 
 const CustomHeader: FC<CustomHeaderProps> = ({ title, leftIcon, rightIcon, style }) => {
+    const { clearUserStore } = useUserStore()
     return (
         <View style={[styles.container, style]}>
             {leftIcon}
             <ThemedText >{title}</ThemedText>
-            {rightIcon}
+            <TouchableOpacity onPress={clearUserStore}>
+                {rightIcon}
+            </TouchableOpacity>
         </View>
     );
 };

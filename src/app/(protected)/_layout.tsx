@@ -6,6 +6,7 @@ export default function ProtectedLayout() {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="[movieId]" />
+            <Stack.Screen name="upload-movie" />
         </Stack>
     )
 }

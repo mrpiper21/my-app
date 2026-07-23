@@ -8,6 +8,8 @@ interface InputProps {
     type?: "text" | "password" | "email" | "number";
     placeholderTextColor?: string;
     style?: StyleProp<ViewStyle>
+    multiline?: boolean;
+    numberOfLines?: number;
 }
 
 const Input = (props: InputProps) => {
@@ -20,7 +22,9 @@ const Input = (props: InputProps) => {
                 secureTextEntry={props.secureTextEntry}
                 keyboardType={props.type === "email" ? "email-address" : props.type === "number" ? "numeric" : "default"}
                 placeholderTextColor={props.placeholderTextColor}
-                style={styles.input}
+                multiline={props.multiline}
+                numberOfLines={props.numberOfLines}
+                style={[styles.input, props.multiline && styles.multilineInput]}
             />
         </View>
     )
@@ -37,6 +41,10 @@ const styles = StyleSheet.create({
     input: {
         padding: 10,
 
+    },
+    multilineInput: {
+        minHeight: 100,
+        textAlignVertical: 'top',
     },
 });
 
