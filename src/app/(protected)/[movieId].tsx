@@ -8,7 +8,7 @@ import { useDeleteMovie, useGetMovie } from "@/hooks/movie-hook"
 import { Ionicons } from "@expo/vector-icons"
 import { Image } from "expo-image"
 import { router, useLocalSearchParams } from "expo-router"
-import { Alert, StyleSheet, Text, View } from "react-native"
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 const person = [
     {
@@ -61,21 +61,26 @@ const MovieDetailScreen = () => {
         <ThemedView style={{ flex: 1 }}>
 
             <View style={{ display: "flex", flex: 1 }}>
-                <Image style={{ height: 350, width: "100%" }} source={{ uri: movieDetail?.posterUrl }} />
-                <CustomHeader
-                    style={{ position: "absolute", top: Spacing.six, left: 0, right: 0 }}
-                    leftIcon={<Ionicons style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }} onPress={() => router.back()} size={24} color="white" name="chevron-back" />}
-                    title=""
-                    rightIcon={
-                        <Ionicons
-                            style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }}
-                            onPress={handleDelete}
-                            size={24}
-                            color="#ff5c5c"
-                            name="trash"
-                        />
-                    }
-                />
+                <View style={{ display: 'flex' }}>
+                    <Image style={{ height: 350, width: "100%" }} source={{ uri: movieDetail?.posterUrl }} />
+                    <CustomHeader
+                        style={{ position: "absolute", top: Spacing.six, left: 0, right: 0 }}
+                        leftIcon={<Ionicons style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }} onPress={() => router.back()} size={24} color="white" name="chevron-back" />}
+                        title=""
+                        rightIcon={
+                            <Ionicons
+                                style={{ padding: 8, borderRadius: 150, backgroundColor: 'rgba(1, 1, 1, 0.5)' }}
+                                onPress={handleDelete}
+                                size={24}
+                                color="#ff5c5c"
+                                name="trash"
+                            />
+                        }
+                    />
+                    <TouchableOpacity onPress={() => router.push({ pathname: "/edit-movie", params: { movieId } })} style={{ padding: 4, borderRadius: 50, borderWidth: 0.5, height: 50, width: 50, alignItems: 'center', justifyContent: 'center', borderColor: "white", position: 'absolute', bottom: -20, right: 20, }}>
+                        <Ionicons size={32} color="white" name="pencil-sharp" />
+                    </TouchableOpacity>
+                </View>
                 <View style={{ paddingHorizontal: 16, marginTop: 10 }}>
                     <View style={{ gap: Spacing.two }}>
                         <ThemedText style={{ color: "white" }} type="subtitle">{movieDetail?.title}</ThemedText>

@@ -1,6 +1,6 @@
 import { IMovie } from "@/@types/home";
 import { db } from "@/config/firebaseConfig";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 export const uploadMovie = async (movie: IMovie) => {
     const movieRef = await addDoc(collection(db, "movies"), {
@@ -52,4 +52,15 @@ export const getMovie = async (movieId: string): Promise<(IMovie & { id: string 
 
 export const deleteMovie = async (movieId: string) => {
     await deleteDoc(doc(db, "movies", movieId))
+}
+
+export const updateMovie = async ({ movieId, movie }: { movieId: string, movie: IMovie }) => {
+    await updateDoc(doc(db, "movies", movieId), {
+        title: movie.title,
+        description: movie.description,
+        rating: movie.rating,
+        genre: movie.genre,
+        year: movie.year,
+        coverImage: movie.posterUrl,
+    })
 }

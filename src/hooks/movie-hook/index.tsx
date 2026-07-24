@@ -1,4 +1,4 @@
-import { deleteMovie, getMovie, getMovies, uploadMovie } from "@/api/movies"
+import { deleteMovie, getMovie, getMovies, updateMovie, uploadMovie } from "@/api/movies"
 import { useUserStore } from "@/store/user-store"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
@@ -46,6 +46,17 @@ export const useDeleteMovie = () => {
         mutationFn: deleteMovie,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["movies"] })
+        },
+    })
+}
+
+export const useUpdateMovie = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: updateMovie,
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["movies"] })
+            queryClient.invalidateQueries({ queryKey: ["movie", variables.movieId] })
         },
     })
 }

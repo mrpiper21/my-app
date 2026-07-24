@@ -7,6 +7,7 @@ export default function ProtectedLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="[movieId]" />
             <Stack.Screen name="upload-movie" />
+            <Stack.Screen name="edit-movie" />
         </Stack>
     )
 }

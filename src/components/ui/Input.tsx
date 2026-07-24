@@ -21,7 +21,7 @@ const Input = (props: InputProps) => {
                 onChangeText={props.onChangeText}
                 secureTextEntry={props.secureTextEntry}
                 keyboardType={props.type === "email" ? "email-address" : props.type === "number" ? "numeric" : "default"}
-                placeholderTextColor={props.placeholderTextColor}
+                placeholderTextColor="#ffff"
                 multiline={props.multiline}
                 numberOfLines={props.numberOfLines}
                 style={[styles.input, props.multiline && styles.multilineInput]}
