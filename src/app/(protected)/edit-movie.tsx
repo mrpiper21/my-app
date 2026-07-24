@@ -87,7 +87,7 @@ const EditMovieScreen = () => {
 
                         <View style={{ marginTop: 20 }}>
                             <Text style={styles.label}>Title</Text>
-                            <Input placeholder="Enter movie title" placeholderTextColor="#ccc" value={title} onChangeText={setTitle} />
+                            <Input type="text" placeholder="Enter movie title" placeholderTextColor="#ccc" value={title} onChangeText={setTitle} />
                         </View>
 
                         <View style={{ marginTop: 20 }}>
