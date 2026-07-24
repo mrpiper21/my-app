@@ -49,7 +49,7 @@ const Index = () => {
                                 </View>
                                 <View style={{ alignItems: "center", gap: 4 }}>
                                     <Ionicons style={{ marginTop: 16 }} size={24} color={"yellow"} name="star" />
-                                    <Text style={{ color: "white" }}>{movie.rating}</Text>
+                                    <Text style={{ color: "white" }}>{movie.rating.toFixed(2)}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
