@@ -22,7 +22,6 @@ export function SessionProvider({ children }: PropsWithChildren) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: restore a persisted token (e.g. via expo-secure-store) here.
     setIsLoading(false);
   }, []);
 

@@ -1,4 +1,3 @@
-import { SessionProvider } from '@/context/AuthContext';
 import { useUserStore } from '@/store/user-store';
 import {
   QueryClient,
@@ -14,9 +13,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider>
-        <RootNavigator />
-      </SessionProvider>
+      <RootNavigator />
     </QueryClientProvider>
   );
 }
