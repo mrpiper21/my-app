@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import { FlatList, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { ActivityIndicator, FlatList, ListRenderItemInfo, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { IMovie } from '@/@types/home';
 import MovieItem from '@/components/home/movie-item';
 import SearchInput from '@/components/home/SearchInput';
 import { ThemedView } from '@/components/themed-view';
@@ -9,7 +10,7 @@ import CustomHeader from '@/components/ui/custom-header';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useGetMovies } from '@/hooks/movie-hook';
 import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 const GRID_COLUMNS = 3
 const GRID_GAP = Spacing.three
@@ -18,9 +19,7 @@ export default function HomeScreen() {
     const [searchText, setSearchText] = useState('')
     const { width: windowWidth } = useWindowDimensions()
 
-    const { data } = useGetMovies()
-
-    const movies = data ?? []
+    const { movies, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetMovies()
 
     const filteredItems = useMemo(() => {
         const query = searchText.trim().toLowerCase()
@@ -33,6 +32,14 @@ export default function HomeScreen() {
         return (containerWidth - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS
     }, [windowWidth])
 
+    const renderMovieItem = useCallback(({ item }: ListRenderItemInfo<IMovie & { id: string }>) => (
+        <MovieItem movie={item} width={itemWidth} />
+    ), [itemWidth])
+
+    const handleEndReached = useCallback(() => {
+        if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
     return (
         <ThemedView style={styles.container}>
             <SafeAreaView style={styles.safeArea}>
@@ -40,14 +47,17 @@ export default function HomeScreen() {
                 <SearchInput onChangeText={setSearchText} placeholder="Search movies TV shows" />
                 <FlatList
                     data={filteredItems}
-                    renderItem={({ item }) => (
-                        <MovieItem movie={item} width={itemWidth} />
-                    )}
+                    renderItem={renderMovieItem}
                     keyExtractor={(item) => item.id.toString()}
                     numColumns={GRID_COLUMNS}
                     columnWrapperStyle={{ gap: GRID_GAP }}
                     contentContainerStyle={{ gap: GRID_GAP, paddingVertical: Spacing.two }}
                     showsVerticalScrollIndicator={false}
+                    onEndReached={handleEndReached}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={isFetchingNextPage ? (
+                        <ActivityIndicator style={styles.footerLoader} color="white" />
+                    ) : null}
                 />
                 <TouchableOpacity onPress={() => router.push("/upload-movie")} activeOpacity={0.7}>
                     <Ionicons style={{ position: "absolute", bottom: -50, right: 5 }} size={64} color={"white"} name='add-circle' />
@@ -88,5 +98,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.three,
         paddingVertical: Spacing.four,
         borderRadius: Spacing.four,
+    },
+    footerLoader: {
+        paddingVertical: Spacing.four,
     },
 });

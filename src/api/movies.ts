@@ -1,6 +1,8 @@
 import { IMovie } from "@/@types/home";
 import { db } from "@/config/firebaseConfig";
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, documentId, getDoc, getDocs, limit, orderBy, query, QueryConstraint, startAfter, updateDoc, where } from "firebase/firestore";
+
+export const MOVIES_PAGE_SIZE = 12
 
 export const uploadMovie = async (movie: IMovie) => {
     const movieRef = await addDoc(collection(db, "movies"), {
@@ -15,10 +17,23 @@ export const uploadMovie = async (movie: IMovie) => {
     return movieRef
 }
 
-export const getMovies = async (userId: string): Promise<(IMovie & { id: string })[]> => {
-    const moviesQuery = query(collection(db, "movies"), where("userId", "==", userId))
+export type MoviesPage = {
+    movies: (IMovie & { id: string })[]
+    nextCursor: string | null
+}
+
+export const getMovies = async (userId: string, cursor?: string): Promise<MoviesPage> => {
+    const constraints: QueryConstraint[] = [
+        where("userId", "==", userId),
+        orderBy(documentId()),
+        limit(MOVIES_PAGE_SIZE),
+    ]
+    if (cursor) constraints.push(startAfter(cursor))
+
+    const moviesQuery = query(collection(db, "movies"), ...constraints)
     const movieQuerySnapShot = await getDocs(moviesQuery)
-    return movieQuerySnapShot.docs.map((doc) => {
+
+    const movies = movieQuerySnapShot.docs.map((doc) => {
         const data = doc.data()
         return {
             id: doc.id,
@@ -31,6 +46,12 @@ export const getMovies = async (userId: string): Promise<(IMovie & { id: string 
             userId: data.userId,
         }
     })
+
+    const nextCursor = movieQuerySnapShot.docs.length === MOVIES_PAGE_SIZE
+        ? movieQuerySnapShot.docs[movieQuerySnapShot.docs.length - 1].id
+        : null
+
+    return { movies, nextCursor }
 }
 
 export const getMovie = async (movieId: string): Promise<(IMovie & { id: string }) | null> => {

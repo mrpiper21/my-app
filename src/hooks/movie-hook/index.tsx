@@ -1,6 +1,7 @@
 import { deleteMovie, getMovie, getMovies, updateMovie, uploadMovie } from "@/api/movies"
 import { useUserStore } from "@/store/user-store"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMemo } from "react"
 
 
 export const useUploadMove = () => {
@@ -21,14 +22,24 @@ export const useGetMovies = () => {
     const { user } = useUserStore()
     const userId = user?._id
 
-    const { isPending, error, data } = useQuery({
+    const {
+        isPending,
+        error,
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteQuery({
         queryKey: ['movies', userId],
-        queryFn: () => getMovies(userId as string),
-        enabled: !!userId
+        queryFn: ({ pageParam }) => getMovies(userId as string, pageParam),
+        initialPageParam: undefined as string | undefined,
+        getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+        enabled: !!userId,
     })
 
-    return { isPending, error, data }
+    const movies = useMemo(() => data?.pages.flatMap((page) => page.movies) ?? [], [data])
 
+    return { isPending, error, movies, fetchNextPage, hasNextPage, isFetchingNextPage }
 }
 
 export const useGetMovie = (movieId: string) => {

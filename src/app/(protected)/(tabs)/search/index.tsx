@@ -17,7 +17,7 @@ const POSTER_ASPECT_RATIO = 120 / 100
 const Index = () => {
 
     const [activeTab, setActiveTab] = useState<TActiveTab>("all")
-    const { data } = useGetMovies()
+    const { movies: data } = useGetMovies()
     const { width: windowWidth } = useWindowDimensions()
 
     const posterWidth = useMemo(() => {
